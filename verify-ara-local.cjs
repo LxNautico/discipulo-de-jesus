@@ -1,0 +1,16 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const engine=require('./word-engine.js');
+const context={window:{}};vm.runInNewContext(fs.readFileSync(__dirname+'/ara-data.js','utf8'),context);
+const data=context.window.BIBLE_ARA;assert.equal(data.translation.id,'ara');assert.equal(data.books.length,1);assert.equal(data.books[0].id,'GEN');assert.equal(data.books[0].chapters.length,50);
+const source=JSON.parse(fs.readFileSync(__dirname+'/piloto-pdf/genesis-completo.json','utf8'));
+assert.deepEqual(Object.keys(source.versions),['ARA']);
+data.books[0].chapters.forEach((chapter,i)=>chapter.forEach((v,j)=>assert.equal(v.text,source.versions.ARA[i+1][j].text)));
+assert.equal(engine.build(data).verseCount,1533);
+const index=fs.readFileSync(__dirname+'/index.html','utf8');assert(index.includes('ara-data.js'));assert(!/src="bible-(?:data|onbv-data)\.js/.test(index));
+const backup=require('./backup-engine.js');
+const noteKey='discipulo-word-note:ara:amor:GEN:1:1';
+const map=new Map([[noteKey,'Minha reflexão ARA']]);
+const storage={get length(){return map.size},key:i=>[...map.keys()][i],getItem:k=>map.get(k)??null};
+const file=backup.parse(JSON.stringify(backup.capture(storage)));
+assert.equal(file.data[noteKey],'Minha reflexão ARA');assert.equal(backup.summary(file.data).notes,1);
+console.log('OK: apenas ARA no recurso do jogo, 50 capítulos/1.533 textos fiéis à extração, escopo de contagem e backup de notas ARA.');

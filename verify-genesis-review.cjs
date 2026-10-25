@@ -1,0 +1,23 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const engine=require('./piloto-pdf/review-engine.js'),root=path.join(__dirname,'piloto-pdf');
+const corpus=JSON.parse(fs.readFileSync(path.join(root,'genesis-completo.json'),'utf8')),queue=engine.items(corpus),manifest=JSON.parse(fs.readFileSync(path.join(root,'manifesto-revisao.json'),'utf8'));
+assert.equal(queue.length,78);assert.equal(new Set(queue.map(i=>i.id)).size,78);assert.equal(manifest.items,queue.length);
+const hash=corpus.sourceSha256,original=engine.empty(hash),item=queue[0];
+const checked=engine.save(original,item,item.original,'Conferido no PDF',true,'2026-10-15T18:00:00Z');
+assert.equal(checked.entries[item.id].status,'checked');assert.deepEqual(original.entries,{});
+const corrected=engine.save(checked,item,item.original+' revisão','Anotação',true);
+assert.equal(corrected.entries[item.id].status,'corrected');
+const draft=engine.save(corrected,item,'','',false);assert.equal(draft.entries[item.id].status,'pending');
+assert.deepEqual(engine.validate(JSON.parse(JSON.stringify(draft)),hash,queue),draft);
+assert.throws(()=>engine.save(draft,item,'','',true));
+assert.throws(()=>engine.validate(corrected,'outro-pdf',queue));
+assert.throws(()=>engine.validate({...corrected,entries:{'__unknown__':corrected.entries[item.id]}},hash,queue));
+const invalid=JSON.parse(JSON.stringify(checked));invalid.entries[item.id].text='alterado';assert.throws(()=>engine.validate(invalid,hash,queue));
+assert.deepEqual(engine.validate(JSON.parse(JSON.stringify(corrected)),hash,queue),corrected);
+const conflict=engine.merge(checked,corrected);assert.equal(conflict.state.entries[item.id].status,'checked');assert.deepEqual(conflict.conflicts,[item.id]);
+const second=queue[1],imported=engine.save(original,second,second.original,'',true),merged=engine.merge(checked,imported);assert.equal(Object.keys(merged.state.entries).length,2);
+for(const image of manifest.images){const file=path.join(root,'imagens-revisao',image),bytes=fs.readFileSync(file);assert.ok(bytes.length>1000);assert.equal(bytes.readUInt16BE(0),0xffd8);}
+for(const item of queue)for(const page of item.pages)assert.ok(manifest.images.includes(`${item.version}-${page}.jpg`));
+const html=fs.readFileSync(path.join(root,'revisao-genesis.html'),'utf8');assert.ok(!/__CORPUS__|__ENGINE__|__UI__/.test(html));
+assert.ok(!/<script[^>]+src=/.test(html));
+console.log(`OK: ${queue.length} itens, ${manifest.images.length} imagens, rascunhos, decisões, exportação/importação e conflitos preservados.`);

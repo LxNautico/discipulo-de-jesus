@@ -1,0 +1,42 @@
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),{execFileSync}=require('node:child_process'),{pathToFileURL}=require('node:url'),assert=require('node:assert/strict');
+const smoke=path.join(__dirname,'topics-browser-smoke.html'),profile=fs.mkdtempSync(path.join(os.tmpdir(),'discipulo-topics-'));
+const test=`<script>try{
+  const c=(v,m)=>{if(!v)throw Error(m)},$=id=>document.getElementById(id);
+  document.querySelector('[data-view="temas"]').click();
+  c(document.querySelectorAll('[data-open-topic]').length===6,'seis trilhas');
+  const open=id=>document.querySelector('[data-open-topic="'+id+'"]').click();
+  open('trabalho-e-economia');
+  c(document.querySelector('h1').textContent==='Trabalho e economia','abriu trabalho');
+  c(document.querySelectorAll('[data-topic-step]').length===5,'cinco etapas trabalho');
+  document.querySelector('[data-topic-step="vocacao"]').click();
+  c(document.querySelector('h1').textContent==='Trabalho como serviço','abriu etapa');
+  document.querySelector('[data-topic-answer="0"]').click();
+  c(!$('topic-finish').disabled,'resposta');
+  $('track-back').click();$('topics-back').click();
+  open('casamento-e-familia');
+  c(document.querySelector('h1').textContent==='Casamento e família','abriu família');
+  c(document.querySelectorAll('[data-topic-step]').length===5,'cinco etapas família');
+  $('topics-back').click();
+  open('amizades-e-namoro');
+  c(document.querySelector('h1').textContent==='Amizades e namoro','abriu amizades');
+  c(document.querySelectorAll('[data-topic-step]').length===5,'cinco etapas amizades');
+  $('topics-back').click();
+  open('criacao-de-filhos');
+  c(document.querySelector('h1').textContent==='Criação de filhos','abriu criação');
+  c(document.querySelectorAll('[data-topic-step]').length===5,'cinco etapas criação');
+  $('topics-back').click();
+  open('sexualidade-e-dignidade');
+  c(document.querySelector('h1').textContent==='Sexualidade e dignidade','abriu sexualidade');
+  c(document.querySelectorAll('[data-topic-step]').length===8,'oito etapas sexualidade');
+  document.querySelector('[data-topic-step="genero"]').click();
+  c(document.querySelector('h1').textContent==='Gênero, criação e diálogo atual','abriu gênero');
+  c(document.body.textContent.includes('ideologia de gênero'),'conteúdo sobre ideologia de gênero');
+  const p=document.createElement('pre');p.id='browser-result';p.textContent='BROWSER_OK';document.body.append(p);
+}catch(e){const p=document.createElement('pre');p.id='browser-result';p.textContent='FAILED '+e.message;document.body.append(p);}</script>`;
+try{
+  const html=fs.readFileSync(path.join(__dirname,'Discipulo-de-Jesus-offline.html'),'utf8');
+  fs.writeFileSync(smoke,html.replace('</body>',test+'</body>'));
+  const out=execFileSync('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless','--disable-gpu','--window-size=390,844','--virtual-time-budget=3000','--user-data-dir='+profile,'--dump-dom',pathToFileURL(smoke).href],{encoding:'utf8',windowsHide:true,timeout:30000,maxBuffer:10*1024*1024,stdio:['ignore','pipe','pipe']});
+  assert.equal(out.match(/<pre id="browser-result">([^<]+)<\/pre>/)?.[1],'BROWSER_OK');
+  console.log('OK Chrome: seis trilhas, incluindo Sexualidade e dignidade, e tela de celular.');
+}finally{if(fs.existsSync(smoke))fs.unlinkSync(smoke);}

@@ -1,0 +1,22 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const {create}=require('./people-notes.js');
+const ctx=vm.createContext({window:{},localStorage:{getItem:()=>null,setItem(){}}});
+vm.runInContext(fs.readFileSync(__dirname+'/people-data.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync(__dirname+'/people-expansion.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync(__dirname+'/bible-data.js','utf8'),ctx);
+vm.runInContext(fs.readFileSync(__dirname+'/app.js','utf8').split('const app=document.querySelector')[0],ctx);
+const profiles=ctx.window.PEOPLE_PROFILES,p=profiles[0],bible=ctx.window.BIBLE_DATA;
+assert.equal(p.id,'abraao');assert(p.aliases.includes('Abrão'));
+assert.equal(profiles.length,8);assert.equal([...profiles.map(x=>x.id)].sort().join(','),'abraao,davi,ester,jesus,maria,moises,paulo,priscila');
+assert.equal(new Set(profiles.map(p=>p.id)).size,profiles.length);
+const readings=profiles.flatMap(profile=>[...profile.events.map(e=>e.reading),...profile.interpretation.readings,...profile.themes.flatMap(t=>t.readings)]);
+readings.forEach(r=>{const book=bible.books.find(b=>b.id===r.book);assert(book,r.book);const chapter=book.chapters[r.chapter-1];assert(chapter);assert(chapter.some(v=>v.number===r.from));assert(chapter.some(v=>v.number===r.to));assert(r.from<=r.to);});
+for(const profile of profiles)for(const title of profile.relatedStudies){ctx.expectedTitle=title;assert(vm.runInContext('lessons.some(l=>l.title===expectedTitle)',ctx),title);}
+const values=new Map([['discipulo-v1','intacto'],['discipulo-topics-v1','intacto']]);
+const storage={getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};
+const store=create(profiles,storage);assert.equal(store.get(p.id),'');assert(store.set(p.id,'Reflexão: <texto> e fé.'));
+assert.equal(create(profiles,storage).get(p.id),'Reflexão: <texto> e fé.');
+assert.equal(store.set('inexistente','não salvar'),false);assert.equal(values.get('discipulo-v1'),'intacto');assert.equal(values.get('discipulo-topics-v1'),'intacto');
+const blocked=create(profiles,{getItem(){throw Error();},setItem(){throw Error();}});assert.equal(blocked.available(),false);assert.equal(blocked.set(p.id,'Na sessão'),false);assert.equal(blocked.get(p.id),'Na sessão');
+values.set('discipulo-people-notes-v1','{corrompido');assert.equal(create(profiles,storage).get(p.id),'');
+console.log('OK: oito perfis completos, aliases, '+readings.length+' referências, estudos relacionados, notas persistidas e progresso anterior preservado.');

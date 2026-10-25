@@ -1,0 +1,32 @@
+/* Interface da trilha; direciona aos recursos já disponíveis no jogo. */
+(() => {
+  const path=window.DISCIPLESHIP_PATH,store=window.DiscipleshipProgress.createStore(path,localStorage);
+  const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const nav=document.querySelector('nav'),button=document.createElement('button');button.dataset.view='trilha';button.textContent='↗   Trilha de discipulado';nav.insertBefore(button,nav.querySelector('[data-view="pessoas"]'));
+  let active=null;
+  const originalRender=render;
+  render=function(){originalRender();if(view!=='trilha')return;active?showModule():showPath();};
+  function top(){window.scrollTo({top:0,behavior:'smooth'});}
+  function levelModules(level){return path.modules.filter(item=>item.level===level.id);}
+  function open(id){active=path.modules.find(item=>item.id===id);store.select(id);render();top();}
+  function showPath(){
+    const progress=store.get(),next=path.modules.find(item=>!progress.completed.includes(item.id)),done=progress.completed.length;
+    app.innerHTML=intro('UM CAMINHO PARA CRESCER','Trilha de discipulado','Uma sequência simples para conectar a jornada bíblica, os livros, temas, pessoas e teologia do jogo.')+
+      `<section class="card discipleship-overview"><span class="tag ${done===path.modules.length?'topic-complete':''}">${done===path.modules.length?'✓ TRILHA CONCLUÍDA':`${done} / ${path.modules.length} ETAPAS REGISTRADAS`}</span><progress class="topic-progress" max="${path.modules.length}" value="${done}" aria-label="Progresso da trilha de discipulado"></progress><p>${next?`Seu próximo passo sugerido é <strong>${esc(next.title)}</strong>. Você pode revisar qualquer etapa já concluída.`:'Você registrou todas as etapas. Continue revisando, praticando e caminhando com sua comunidade.'}</p>${next?`<button class="primary" id="discipleship-resume">${progress.notes[next.id]?'Retomar etapa':'Começar próxima etapa'} →</button>`:''}<p class="muted">Esta trilha organiza o estudo; ela não cria XP nem mede fé ou maturidade espiritual. As reflexões ficam salvas e entram no backup e na sincronização.</p></section>`+
+      `<div class="discipleship-levels">${path.levels.map(level=>{const items=levelModules(level),levelDone=items.filter(item=>progress.completed.includes(item.id)).length;return `<section class="card discipleship-level"><div class="discipleship-level-heading"><span class="level-number">${level.number}</span><div><span class="eyebrow">NÍVEL ${level.number}</span><h2>${esc(level.title)}</h2></div><span class="tag">${levelDone}/${items.length}</span></div><p>${esc(level.description)}</p><div class="discipleship-modules">${items.map(item=>{const index=path.modules.indexOf(item),previous=path.modules[index-1],doneItem=progress.completed.includes(item.id),locked=previous&&!progress.completed.includes(previous.id);return `<article class="discipleship-module ${doneItem?'done':locked?'locked':'next-study'}"><span class="tag">${doneItem?'✓ CONCLUÍDA':locked?'ETAPA POSTERIOR':'→ PRÓXIMA ETAPA'}</span><h3>${esc(item.title)}</h3><p>${esc(item.summary)}</p><button class="secondary" data-discipleship-module="${item.id}" ${locked?'disabled':''}>${doneItem?'Revisar etapa':locked?'Conclua a etapa anterior':'Abrir etapa'} →</button></article>`;}).join('')}</div></section>`;}).join('')}</div>${store.available()?'':'<p class="notice">O armazenamento do navegador não está disponível. Suas anotações podem se perder ao fechar a página.</p>'}`;
+    document.querySelector('#discipleship-resume')?.addEventListener('click',()=>open(next.id));
+    app.querySelectorAll('[data-discipleship-module]').forEach(b=>b.onclick=()=>open(b.dataset.discipleshipModule));
+  }
+  function showModule(){
+    const item=active,index=path.modules.indexOf(item),progress=store.get(),finished=progress.completed.includes(item.id),previous=path.modules[index-1],next=path.modules[index+1];
+    app.innerHTML=`<button class="secondary" id="discipleship-back">← Ver trilha completa</button>`+intro(`NÍVEL ${path.levels.find(level=>level.id===item.level).number} · TRILHA DE DISCIPULADO`,esc(item.title),esc(item.summary))+`<section class="card discipleship-detail"><h2>Recursos para esta etapa</h2><p>Abra os recursos abaixo, leia no seu ritmo e volte para registrar o que compreendeu.</p><div class="discipleship-resources">${item.resources.map((resource,i)=>`<button class="secondary" data-discipleship-resource="${i}">${esc(resource.label)} →</button>`).join('')}</div><h2>Registre seu aprendizado</h2><label for="discipleship-note">O que você aprendeu ou quer praticar?</label><textarea id="discipleship-note" placeholder="Escreva uma reflexão pessoal antes de concluir esta etapa."></textarea><p id="discipleship-status" class="muted" role="status"></p><div class="topic-actions"><button class="secondary" id="discipleship-previous" ${!previous?'disabled':''}>← Etapa anterior</button><button class="primary" id="discipleship-finish" ${finished?'':'disabled'}>${finished?'✓ Etapa concluída':'Escreva uma reflexão para concluir'} →</button></div></section>`;
+    document.querySelector('#discipleship-back').onclick=()=>{active=null;render();top();};
+    const note=document.querySelector('#discipleship-note'),status=document.querySelector('#discipleship-status'),finish=document.querySelector('#discipleship-finish');note.value=progress.notes[item.id]||'';
+    const refresh=()=>{const valid=note.value.trim().length>=10;finish.disabled=!finished&&!valid;finish.textContent=finished?'✓ Etapa concluída · continuar':valid?'Concluir etapa e continuar →':'Escreva uma reflexão para concluir';};
+    status.textContent=store.available()?'Sua reflexão será incluída no backup e na sincronização.':'Armazenamento indisponível; copie sua reflexão antes de sair.';refresh();
+    note.oninput=()=>{const saved=store.note(item.id,note.value);status.textContent=saved?'Reflexão salva.':'Não foi possível salvar. Copie sua reflexão antes de sair.';refresh();};
+    document.querySelector('#discipleship-previous').onclick=()=>{if(previous)open(previous.id);};
+    finish.onclick=()=>{if(!finished&&finish.disabled)return;store.complete(item.id);if(next)open(next.id);else{active=null;render();top();}};
+    app.querySelectorAll('[data-discipleship-resource]').forEach(button=>button.onclick=()=>{const resource=item.resources[Number(button.dataset.discipleshipResource)];view=resource.view;render();top();if(Number.isInteger(resource.lesson))openLesson(resource.lesson);});
+  }
+})();

@@ -1,0 +1,358 @@
+{
+  "expectedChapters": 50,
+  "expectedVersesPerVersion": 1533,
+  "checks": [
+    {
+      "version": "ARA",
+      "chapter": 1,
+      "verses": 31,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 2,
+      "verses": 25,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 3,
+      "verses": 24,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 4,
+      "verses": 26,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 5,
+      "verses": 32,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 6,
+      "verses": 22,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 7,
+      "verses": 24,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 8,
+      "verses": 22,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 9,
+      "verses": 29,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 10,
+      "verses": 32,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 11,
+      "verses": 32,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 12,
+      "verses": 20,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 13,
+      "verses": 18,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 14,
+      "verses": 24,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 15,
+      "verses": 21,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 16,
+      "verses": 16,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 17,
+      "verses": 27,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 18,
+      "verses": 33,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 19,
+      "verses": 38,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 20,
+      "verses": 18,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 21,
+      "verses": 34,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 22,
+      "verses": 24,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 23,
+      "verses": 20,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 24,
+      "verses": 67,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 25,
+      "verses": 34,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 26,
+      "verses": 35,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 27,
+      "verses": 46,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 28,
+      "verses": 22,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 29,
+      "verses": 35,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 30,
+      "verses": 43,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 31,
+      "verses": 55,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 32,
+      "verses": 32,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 33,
+      "verses": 20,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 34,
+      "verses": 31,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 35,
+      "verses": 29,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 36,
+      "verses": 43,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 37,
+      "verses": 36,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 38,
+      "verses": 30,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 39,
+      "verses": 23,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 40,
+      "verses": 23,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 41,
+      "verses": 57,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 42,
+      "verses": 38,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 43,
+      "verses": 34,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 44,
+      "verses": 34,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 45,
+      "verses": 28,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 46,
+      "verses": 34,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 47,
+      "verses": 31,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 48,
+      "verses": 22,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 49,
+      "verses": 33,
+      "ok": true,
+      "errors": []
+    },
+    {
+      "version": "ARA",
+      "chapter": 50,
+      "verses": 26,
+      "ok": true,
+      "errors": []
+    }
+  ],
+  "issues": [],
+  "flaggedVerses": 78
+}

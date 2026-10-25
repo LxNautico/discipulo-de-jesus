@@ -1,0 +1,8 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const context={window:{},Event:class{}};vm.runInNewContext(fs.readFileSync(__dirname+'/discipleship-data.js','utf8'),context);vm.runInNewContext(fs.readFileSync(__dirname+'/discipleship-progress.js','utf8'),context);
+const path=context.window.DISCIPLESHIP_PATH;assert.equal(path.levels.length,5);assert.equal(path.modules.length,13);assert.equal(new Set(path.modules.map(item=>item.id)).size,13);
+for(const item of path.modules){assert(path.levels.some(level=>level.id===item.level));assert(item.resources.length>=2);assert(item.resources.every(resource=>typeof resource.view==='string'&&typeof resource.label==='string'));}
+const values=new Map([['discipulo-v1','jornada preservada']]),storage={getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};let store=context.window.DiscipleshipProgress.createStore(path,storage);
+assert.equal(store.get().completed.length,0);store.note('evangelho','Uma reflexão pessoal com mais de dez caracteres.');store.complete('evangelho');store.complete('evangelho');store.select('biblia');store=context.window.DiscipleshipProgress.createStore(path,storage);
+assert.equal(store.get().completed.join(','),'evangelho');assert.equal(store.get().notes.evangelho,'Uma reflexão pessoal com mais de dez caracteres.');assert.equal(store.get().lastModule,'biblia');assert.equal(values.get('discipulo-v1'),'jornada preservada');assert.equal(store.complete('inexistente'),false);
+console.log('OK: cinco níveis, 13 etapas, referências, reflexão, conclusão sem duplicação, retomada e jornada preservada.');

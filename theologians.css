@@ -1,0 +1,11 @@
+.theologian-filters>label{display:grid;gap:8px}.theologian-filters .bible-controls{margin-top:14px}.theologian-filters select{max-width:100%}.theologian-card{display:flex;flex-direction:column;align-items:flex-start}.theologian-card h2{font-size:25px;margin:0 0 6px}.theologian-dates{font-size:13px;color:#737b70}.theologian-card>button{margin-top:auto}.theologian-themes{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 18px}.theologian-themes span{font-size:12px;padding:5px 9px;border-radius:5px;background:#e3eee7;color:#245840}.theologian-section{margin-top:24px}.theologian-works{padding-left:20px}.theologian-works li{padding:8px 0;border-bottom:1px solid #e3e7de}.theologian-works h3{font-size:21px;margin:0}.theologian-section summary{cursor:pointer;font-weight:600}.theologian-section a{overflow-wrap:anywhere}#theologians-back{margin-top:24px}@media(max-width:750px){.theologian-filters .bible-controls label{flex-basis:100%}.theologian-card h2{font-size:24px}}
+.tradition-patristic{--tradition-ink:#62408a;--tradition-bg:#f0e8fa}
+.tradition-medieval{--tradition-ink:#82520e;--tradition-bg:#fbefd7}
+.tradition-lutheran{--tradition-ink:#9b3b35;--tradition-bg:#fceae7}
+.tradition-reformed{--tradition-ink:#245c94;--tradition-bg:#e6effb}
+.tradition-wesleyan{--tradition-ink:#256344;--tradition-bg:#e5f2e9}
+.tradition-anglican{--tradition-ink:#216a72;--tradition-bg:#e1f2f4}
+.theologian-card{border-top:4px solid var(--tradition-ink)}
+.tag.tradition-badge{background:var(--tradition-bg);color:var(--tradition-ink);border:1px solid currentColor;font-weight:700;letter-spacing:.02em;line-height:1.5;white-space:normal}
+.tradition-legend{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0 14px}
+.theologian-profile-tradition{margin-top:14px}

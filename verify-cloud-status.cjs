@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict'),{fingerprint,describe}=require('./cloud-status.js');
+const data={'discipulo-v1':JSON.stringify({schemaVersion:5,completed:[0],notes:{0:'Teste'}})};
+const signature=fingerprint(data);
+assert.equal(signature,fingerprint({'discipulo-v1':JSON.stringify({notes:{0:'Teste'},completed:[0],schemaVersion:5})}));
+assert.notEqual(signature,fingerprint({'discipulo-v1':JSON.stringify({schemaVersion:5,completed:[0],notes:{0:'Mudou'}})}));
+assert.notEqual(fingerprint({'discipulo-word-note:por_blj:fé:GEN:1:1':'1'}),fingerprint({'discipulo-word-note:por_blj:fé:GEN:1:1':' 1'}));
+const base={user:'jogador',owner:'jogador',online:true,current:signature,meta:{fingerprint:signature}};
+assert.equal(describe(base).kind,'saved');
+assert.equal(describe({...base,current:'novo'}).kind,'pending');
+assert.equal(describe({...base,online:false}).kind,'pending');
+assert.equal(describe({...base,user:null}).kind,'local');
+assert.equal(describe({...base,owner:'outro'}).kind,'error');
+assert.equal(describe({...base,working:true}).kind,'working');
+assert.equal(describe({...base,error:'Falha de rede'}).kind,'error');
+assert.equal(describe({...base,localFailure:true}).kind,'error');
+assert.equal(describe({...base,meta:null}).kind,'pending');
+assert.equal(describe({...base,meta:{fingerprint:signature,hasRemoteChanges:true}}).kind,'receive');
+console.log('OK: indicador distingue dados locais, pendências, envio em curso, confirmação, dados a receber, offline, falhas e conta diferente.');

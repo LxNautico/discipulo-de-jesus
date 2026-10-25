@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gênesis completo · ARA</title>
+<style>
+*{box-sizing:border-box}body{max-width:920px;margin:24px auto;padding:0 20px;background:#faf9f4;color:#234f40;font:18px/1.7 system-ui}h1{line-height:1.2}aside{background:#fff0cd;padding:16px;border-radius:8px}nav{display:flex;gap:12px;flex-wrap:wrap;align-items:end;position:sticky;top:0;background:#faf9f4;padding:16px 0;border-bottom:1px solid #ccc}label{display:grid;font-size:14px}select,button{font:inherit;padding:10px;border:1px solid #aabbb0;border-radius:6px;background:white;color:#234f40}button{cursor:pointer}button:disabled{opacity:.4;cursor:default}article>p{border-bottom:1px solid #ddd;padding-bottom:15px}b{color:#975a10}small,summary{font-size:13px;color:#666}details{background:#f0eee6;padding:8px;margin-top:8px}details p{font-size:14px}a{color:#235c94}#status{font-size:14px}#verses{overflow-wrap:anywhere}
+</style>
+<h1>Gênesis · Almeida Revista e Atualizada</h1>
+<p><a href="revisao-genesis.html">Abrir fila de revisão dos trechos sinalizados →</a></p>
+<aside>ARA escolhida como única base local do jogo. A revisão dos avisos é opcional; eles não são erros confirmados. A aprovação de uso não equivale a uma revisão editorial independente. Outras versões continuam disponíveis online no Bible.com.</aside>
+<nav aria-label="Escolher leitura"><label>Tradução<select id="version"></select></label><label>Capítulo<select id="chapter"></select></label><button id="previous" aria-label="Capítulo anterior">← Anterior</button><button id="next" aria-label="Próximo capítulo">Próximo →</button></nav>
+<main><h2 id="heading"></h2><p id="status" role="status"></p><article id="verses"></article></main>
+<script id="corpus" type="application/json">__CORPUS__</script>
+<script id="validation" type="application/json">__VALIDATION__</script>
+<script>
+const corpus=JSON.parse(document.getElementById('corpus').textContent), report=JSON.parse(document.getElementById('validation').textContent);
+const version=document.getElementById('version'),chapter=document.getElementById('chapter'),article=document.getElementById('verses');
+for(const value of Object.keys(corpus.versions))version.add(new Option(value,value));
+for(let i=1;i<=50;i++)chapter.add(new Option(i,i));
+function render(){
+ const ch=Number(chapter.value),name=version.value,verses=corpus.versions[name][ch]||[],check=report.checks.find(c=>c.version===name&&c.chapter===ch);
+ document.getElementById('heading').textContent=`Gênesis ${ch} · ${name}`;
+ document.getElementById('status').textContent=`${verses.length} versículos · ${check?.ok?'Sequência completa':'Sequência com pendências — consultar relatório'} · ${verses.filter(v=>v.warnings.length).length} versículos com junções a conferir`;
+ article.replaceChildren();
+ for(const verse of verses){
+  const p=document.createElement('p'),number=document.createElement('b'),source=document.createElement('small');
+  number.textContent=verse.verse+' ';p.append(number,document.createTextNode(verse.text));
+  source.textContent='PDF p. '+verse.pages.join(', ');p.append(document.createElement('br'),source);
+  if(verse.warnings.length){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Conferir junções do texto ('+verse.warnings.length+')';details.append(summary);for(const warning of verse.warnings){const note=document.createElement('p');note.textContent='p. '+warning.page+': '+warning.line;details.append(note)}p.append(details)}
+  article.append(p);
+ }
+ document.getElementById('previous').disabled=ch===1;document.getElementById('next').disabled=ch===50;
+}
+version.addEventListener('change',render);chapter.addEventListener('change',render);
+for(const [id,delta] of [['previous',-1],['next',1]])document.getElementById(id).addEventListener('click',()=>{chapter.value=String(Number(chapter.value)+delta);render();document.getElementById('heading').scrollIntoView({block:'center'})});
+render();
+</script>
+</html>
